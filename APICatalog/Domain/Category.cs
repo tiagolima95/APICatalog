@@ -1,10 +1,18 @@
-﻿namespace APICatalog.Domain;
+﻿using System.Collections.ObjectModel;
+
+namespace APICatalog.Domain;
 
 public class Category
 {
+
+    public Category()
+    {
+            Products = new Collection<Product>();
+    }
     public int CategoryId { get; set; }
     public string? Name { get; set; }
     public string? ImageUrl { get; set; }
+    public ICollection<Product>? Products { get; set; }
 
 
 
