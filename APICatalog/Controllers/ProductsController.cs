@@ -2,10 +2,11 @@
 using APICatalog.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace APICatalog.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -16,21 +17,20 @@ namespace APICatalog.Controllers
             _context = context;
         }
 
+        // api/produtos
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> Get()
+        public async Task<ActionResult<IEnumerable<Product>>> Get()
         {
-            var products = _context.Products.ToList();
-            if(products is null)
-            {
-                return NotFound("Products not found");
-            }
-            return products;
+            return await _context.Products.AsNoTracking().ToListAsync();
+                
         }
 
+        //rota api/produtos/1
         [HttpGet("{id:int}", Name="GetProduct")]
-        public ActionResult<Product> Get(int id)
+        public async Task<ActionResult<Product>> GetById(int id)
         {
-            var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
+            var product = await _context.Products.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.ProductId == id);
 
             if(product is null)
             {
@@ -63,7 +63,7 @@ namespace APICatalog.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(product).State = Microsoft.EntityFrameworkCore.EntityState.Modified; 
+            _context.Entry(product).State = EntityState.Modified; 
             _context.SaveChanges();
 
             return Ok(product);
