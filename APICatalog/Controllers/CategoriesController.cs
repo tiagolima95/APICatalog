@@ -31,8 +31,8 @@ namespace APICatalog.Controllers
 
         [HttpGet("{id:int}", Name = "GetCategory")]
         public ActionResult<Category> Get(int id)
-        {
-            var category =  _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+        {            
+            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
 
             if (category == null)
             {

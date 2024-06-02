@@ -1,4 +1,6 @@
 using APICatalog.Context;
+using APICatalog.Extensions;
+using APICatalog.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -19,15 +21,21 @@ builder.Services.AddControllers();
 string? sqlServerConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options => 
-    options.UseSqlServer(sqlServerConnection));        
+    options.UseSqlServer(sqlServerConnection));
 
-var app = builder.Build();
+builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
+{
+    LogLevel = LogLevel.Information
+}));
+
+var app = builder.Build(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ConfigureExceptionHandler();
 }
 
 app.UseHttpsRedirection();
